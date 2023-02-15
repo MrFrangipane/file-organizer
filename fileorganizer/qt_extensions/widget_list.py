@@ -4,17 +4,19 @@ from PySide6.QtWidgets import QWidget, QGroupBox, QGridLayout, QListWidget, QLis
 from fileorganizer.qt_extensions import make_icon_button
 
 
-class WidgetList(QGroupBox):
+class WidgetList(QGroupBox):  # FIXME find a better name
 
     newClicked = Signal()
     documentationClicked = Signal()
     refreshClicked = Signal()
+    currentChanged = Signal()
 
     def __init__(self, caption, horizontal=False, parent=None):
         QGroupBox.__init__(self, caption, parent)
 
         self._is_horizontal = horizontal
         self.list = QListWidget()
+        self.list.currentItemChanged.connect(self._changed)
 
         if horizontal:
             self.list.setHorizontalScrollMode(QListWidget.ScrollMode.ScrollPerPixel)
@@ -57,9 +59,12 @@ class WidgetList(QGroupBox):
         self.list.clear()
 
     def selected(self):
-        indexes = self.list.selectedIndexes()
-        if indexes:
+        index = self.list.currentIndex()
+        if index.isValid():
             if self._is_horizontal:
-                return self.list.itemWidget(self.list.item(indexes[0].column())).name
+                return self.list.itemWidget(self.list.item(index.column())).name
             else:
-                return self.list.itemWidget(self.list.item(indexes[0].row())).name
+                return self.list.itemWidget(self.list.item(index.row())).name
+
+    def _changed(self):
+        self.currentChanged.emit()

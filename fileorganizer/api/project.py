@@ -29,11 +29,11 @@ class ProjectAPI:
         if ProjectAPI.root_folder is None:
             raise RuntimeError("ProjectAPI has no root folder")
 
-        return os.path.exists(ProjectAPI._make_project_foldername(project_name))
+        return os.path.exists(ProjectAPI.make_project_foldername(project_name))
 
     @staticmethod
     def new(project_name) -> bool:
-        project_foldername = ProjectAPI._make_project_foldername(project_name)
+        project_foldername = ProjectAPI.make_project_foldername(project_name)
         documentation_foldername = ProjectAPI._make_documentation_foldername(project_name)
         os.makedirs(project_foldername)
         os.makedirs(documentation_foldername)
@@ -52,17 +52,17 @@ class ProjectAPI:
         os.startfile(ProjectAPI._make_documentation_foldername(project_name))
 
     @staticmethod
-    def _make_project_foldername(project_name):
-        return os.path.join(ProjectAPI.root_folder, ProjectAPI._sanitize(project_name))
-
-    @staticmethod
     def _make_documentation_foldername(project_name):
-        project_foldername = ProjectAPI._make_project_foldername(project_name)
+        project_foldername = ProjectAPI.make_project_foldername(project_name)
         return os.path.join(project_foldername, "_documentation")
 
     @staticmethod
     def _make_metadata_filepath(project_name):
-        return os.path.join(ProjectAPI._make_project_foldername(project_name), ".fileorganizer")
+        return os.path.join(ProjectAPI.make_project_foldername(project_name), ".fileorganizer")
+
+    @staticmethod
+    def make_project_foldername(project_name):
+        return os.path.join(ProjectAPI.root_folder, ProjectAPI._sanitize(project_name))
 
     @staticmethod
     def _sanitize(name):

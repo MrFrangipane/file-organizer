@@ -3,15 +3,14 @@ from PySide6.QtCore import QSize
 
 
 class StepWidget(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, name, parent=None):
         QWidget.__init__(self, parent)
 
-        self.label = QLabel("STEP")
-        self.label2 = QLabel("Name")
+        self.name = name
+        self._label = QLabel(name)
 
         layout = QGridLayout(self)
-        layout.addWidget(self.label)
-        layout.addWidget(self.label2)
+        layout.addWidget(self._label)
 
     def sizeHint(self):
-        return QSize(80, 80)
+        return QSize(120, 60)
