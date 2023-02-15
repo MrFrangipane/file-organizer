@@ -14,9 +14,12 @@ class WidgetList(QGroupBox):  # FIXME find a better name
     def __init__(self, caption, horizontal=False, parent=None):
         QGroupBox.__init__(self, caption, parent)
 
+        self.caption = caption
+
         self._is_horizontal = horizontal
         self.list = QListWidget()
-        self.list.currentItemChanged.connect(self._changed)
+        selection_model = self.list.selectionModel()
+        selection_model.selectionChanged.connect(self._changed)
 
         if horizontal:
             self.list.setHorizontalScrollMode(QListWidget.ScrollMode.ScrollPerPixel)
@@ -56,14 +59,14 @@ class WidgetList(QGroupBox):  # FIXME find a better name
             self.list.setFixedWidth(widget.sizeHint().width() + self.list.verticalScrollBar().width())
 
     def clear(self):
-        self.list.blockSignals(True)
+        self.blockSignals(True)
         self.list.clear()
-        self.list.blockSignals(False)
+        self.blockSignals(False)
 
     def selected(self):
         index = self.list.currentIndex()
         if index.isValid():
-            return self.list.itemWidget(self.list.item(index.row())).name
+            return self.list.indexWidget(index).name
 
     def _changed(self):
         self.currentChanged.emit()

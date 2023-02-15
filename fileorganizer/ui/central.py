@@ -103,6 +103,7 @@ class CentralWidget(QWidget):
 
             self.versions.clear()
             self.steps.clear()
+
             for step_name in StepAPI.all_names(project_name):
                 self.steps.addWidget(StepWidget(step_name))
 

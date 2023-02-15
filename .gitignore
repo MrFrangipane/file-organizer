@@ -1,5 +1,7 @@
 venv/
 .idea/
 
+projects-dev/
+
 .py[cod]
 __pycache__
