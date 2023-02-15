@@ -30,4 +30,8 @@ main_window.show()
 
 #
 # Run
+if len(sys.argv) >= 3 and sys.argv[2] == "--css":
+    from guibedos6.css.editor import CSSEditor
+    css_editor = CSSEditor('Frangitron')
+
 sys.exit(q_application.exec())

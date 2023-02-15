@@ -194,7 +194,7 @@ QAbstractItemView::item:selected:active {
 
 QAbstractItemView::item:selected:!active {
     color: rgb(66, 66, 66);
-    background-color: rgb(173, 173, 173);
+    background-color: rgb(94, 177, 224);
 }
 
 QHeaderView::section {
@@ -233,17 +233,21 @@ QScrollArea, *[hasBackground="true"] {
     background-color: rgb(73, 73, 73);
     border-radius: 2px;
 }
-
 QScrollBar {
     background-color: rgb(135, 135, 135);
     border-radius: 2px;
     border: none;
 }
 
+QScrollBar:disabled {
+    background-color: rgb(0, 135, 135);
+}
+
 QScrollBar:vertical {
     width: 13px;
     margin: 0px 0px 0px 5px;
 }
+
 
 QScrollBar:horizontal {
     height: 13px;

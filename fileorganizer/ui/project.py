@@ -14,4 +14,4 @@ class ProjectWidget(QWidget):
         layout.addWidget(self._label)
 
     def sizeHint(self):
-        return QSize(150, 40)
+        return QSize(200, 40)

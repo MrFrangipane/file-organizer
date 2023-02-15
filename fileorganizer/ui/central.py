@@ -10,6 +10,7 @@ from fileorganizer.ui.version import VersionWidget
 
 from fileorganizer.api.project import ProjectAPI
 from fileorganizer.api.step import StepAPI
+from fileorganizer.api.version import VersionAPI
 
 
 class CentralWidget(QWidget):
@@ -24,10 +25,14 @@ class CentralWidget(QWidget):
 
         self.steps = WidgetList("Step", horizontal=True)
         self.steps.newClicked.connect(self.step_new)
+        self.steps.currentChanged.connect(self.versions_refresh)
         self.steps.refreshClicked.connect(self.steps_refresh)
         self.steps.documentationClicked.connect(self.step_documentation)
 
         self.versions = WidgetList("Version")
+        self.versions.newClicked.connect(self.version_new)
+        self.versions.refreshClicked.connect(self.versions_refresh)
+        self.versions.documentationClicked.connect(self.version_documentation)
 
         self.empty_version = QWidget()
         self.empty_version.setMinimumSize(400, 400)
@@ -58,6 +63,8 @@ class CentralWidget(QWidget):
 
     def projects_refresh(self):
         with Hourglass():
+            self.versions.clear()
+            self.steps.clear()
             self.projects.clear()
             for project_name in ProjectAPI.all_names():
                 self.projects.addWidget(ProjectWidget(project_name))
@@ -94,6 +101,7 @@ class CentralWidget(QWidget):
             if project_name is None:
                 return
 
+            self.versions.clear()
             self.steps.clear()
             for step_name in StepAPI.all_names(project_name):
                 self.steps.addWidget(StepWidget(step_name))
@@ -103,3 +111,43 @@ class CentralWidget(QWidget):
         step_name = self.steps.selected()
         if project_name and step_name:
             StepAPI.open_documentation(project_name, step_name)
+
+    def version_new(self):
+        project_name = self.projects.selected()
+        step_name = self.steps.selected()
+        if project_name is None or step_name is None:
+            return
+
+        version_name, ok = QInputDialog().getText(self.parent(), "New Version", "Name:")
+        if not ok or not version_name:
+            return
+
+        if VersionAPI.exists(project_name, step_name, version_name):
+            make_warning_message_box(
+                self.parent(),
+                f"The version {version_name} already exists for step {project_name}/{step_name}"
+            ).exec()
+            return
+
+        if VersionAPI.new(project_name, step_name, version_name):
+            self.versions_refresh()
+        else:
+            make_warning_message_box(self.parent(), f"Error during version creation").exec()
+
+    def versions_refresh(self):
+        with Hourglass():
+            project_name = self.projects.selected()
+            step_name = self.steps.selected()
+            if project_name is None or step_name is None:
+                return
+
+            self.versions.clear()
+            for version_name in VersionAPI.all_names(project_name, step_name):
+                self.versions.addWidget(VersionWidget(version_name))
+
+    def version_documentation(self):
+        project_name = self.projects.selected()
+        step_name = self.steps.selected()
+        version_name = self.versions.selected()
+        if project_name and step_name and version_name:
+            VersionAPI.open_documentation(project_name, step_name, version_name)

@@ -10,7 +10,7 @@ class StepAPI:
     @staticmethod
     def all_names(project_name: str) -> [str]:
         metadatas = list()
-        project_root = ProjectAPI.make_project_foldername(project_name)
+        project_root = ProjectAPI.make_foldername(project_name)
         for folder in os.listdir(project_root):
             step_folderpath = os.path.join(project_root, folder)
             if not os.path.isdir(step_folderpath):
@@ -31,11 +31,11 @@ class StepAPI:
     @staticmethod
     def exists(project_name: str, step_name: str) -> bool:
         """Return True of False regarding if a project exists (case-insensitive)"""
-        return os.path.exists(StepAPI._make_step_foldername(project_name, step_name))
+        return os.path.exists(StepAPI.make_foldername(project_name, step_name))
 
     @staticmethod
     def new(project_name: str, step_name: str) -> bool:
-        step_foldername = StepAPI._make_step_foldername(project_name, step_name)
+        step_foldername = StepAPI.make_foldername(project_name, step_name)
         documentation_foldername = StepAPI._make_documentation_foldername(project_name, step_name)
         os.makedirs(step_foldername)
         os.makedirs(documentation_foldername)
@@ -58,16 +58,16 @@ class StepAPI:
 
     @staticmethod
     def _make_documentation_foldername(project_name: str, step_name: str) -> str:
-        step_foldername = StepAPI._make_step_foldername(project_name, step_name)
-        return os.path.join(step_foldername, "_documentation")
+        foldername = StepAPI.make_foldername(project_name, step_name)
+        return os.path.join(foldername, "_documentation")
 
     @staticmethod
     def _make_metadata_filepath(project_name: str, step_name: str) -> str:
-        return os.path.join(StepAPI._make_step_foldername(project_name, step_name), ".fileorganizer")
+        return os.path.join(StepAPI.make_foldername(project_name, step_name), ".fileorganizer")
 
     @staticmethod
-    def _make_step_foldername(project_name: str, step_name: str) -> str:
-        return os.path.join(ProjectAPI.make_project_foldername(project_name), StepAPI._sanitize(step_name))
+    def make_foldername(project_name: str, step_name: str) -> str:
+        return os.path.join(ProjectAPI.make_foldername(project_name), StepAPI._sanitize(step_name))
 
     @staticmethod
     def _sanitize(name: str) -> str:

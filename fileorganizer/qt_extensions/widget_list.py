@@ -56,15 +56,14 @@ class WidgetList(QGroupBox):  # FIXME find a better name
             self.list.setFixedWidth(widget.sizeHint().width() + self.list.verticalScrollBar().width())
 
     def clear(self):
+        self.list.blockSignals(True)
         self.list.clear()
+        self.list.blockSignals(False)
 
     def selected(self):
         index = self.list.currentIndex()
         if index.isValid():
-            if self._is_horizontal:
-                return self.list.itemWidget(self.list.item(index.column())).name
-            else:
-                return self.list.itemWidget(self.list.item(index.row())).name
+            return self.list.itemWidget(self.list.item(index.row())).name
 
     def _changed(self):
         self.currentChanged.emit()
