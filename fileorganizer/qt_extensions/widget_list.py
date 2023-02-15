@@ -10,6 +10,7 @@ class WidgetList(QGroupBox):  # FIXME find a better name
     documentationClicked = Signal()
     refreshClicked = Signal()
     currentChanged = Signal()
+    pathToClipboardClicked = Signal()
 
     def __init__(self, caption, horizontal=False, parent=None):
         QGroupBox.__init__(self, caption, parent)
@@ -35,14 +36,16 @@ class WidgetList(QGroupBox):  # FIXME find a better name
         self.button_new = make_icon_button(f"Create new {caption}", 'plus.png', self.newClicked)
         self.button_docs = make_icon_button("Open documentation folder", 'file.png', self.documentationClicked)
         self.button_refresh = make_icon_button("Refresh list", 'refresh.png', self.refreshClicked)
+        self.button_path_to_clipboard = make_icon_button("Copy path to clipboard", 'clipboard-folder.png', self.pathToClipboardClicked)
 
         layout = QGridLayout(self)
-        layout.addWidget(self.list, 0, 0, 1, 4)
+        layout.addWidget(self.list, 0, 0, 1, 5)
 
         layout.addWidget(QWidget(), 1, 0)
         layout.addWidget(self.button_new, 1, 1)
         layout.addWidget(self.button_refresh, 1, 2)
         layout.addWidget(self.button_docs, 1, 3)
+        layout.addWidget(self.button_path_to_clipboard, 1, 4)
 
         layout.setColumnStretch(0, 100)
 

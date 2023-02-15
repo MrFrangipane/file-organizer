@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget, QGridLayout, QInputDialog
+from PySide6.QtWidgets import QApplication, QWidget, QGridLayout, QInputDialog
 
 from fileorganizer.qt_extensions import make_warning_message_box
 from fileorganizer.qt_extensions.widget_list import WidgetList
@@ -22,17 +22,20 @@ class CentralWidget(QWidget):
         self.projects.currentChanged.connect(self.steps_refresh)
         self.projects.refreshClicked.connect(self.projects_refresh)
         self.projects.documentationClicked.connect(self.project_documentation)
+        self.projects.pathToClipboardClicked.connect(self.project_path_to_clipboard)
 
         self.steps = WidgetList("Step", horizontal=True)
         self.steps.newClicked.connect(self.step_new)
         self.steps.currentChanged.connect(self.versions_refresh)
         self.steps.refreshClicked.connect(self.steps_refresh)
         self.steps.documentationClicked.connect(self.step_documentation)
+        self.steps.pathToClipboardClicked.connect(self.step_path_to_clipboard)
 
         self.versions = WidgetList("Version")
         self.versions.newClicked.connect(self.version_new)
         self.versions.refreshClicked.connect(self.versions_refresh)
         self.versions.documentationClicked.connect(self.version_documentation)
+        self.versions.pathToClipboardClicked.connect(self.version_path_to_clipboard)
 
         self.empty_version = QWidget()
         self.empty_version.setMinimumSize(400, 400)
@@ -74,6 +77,14 @@ class CentralWidget(QWidget):
         if project_name:
             ProjectAPI.open_documentation(project_name)
 
+    def project_path_to_clipboard(self):
+        project_name = self.projects.selected()
+        if project_name is None:
+            return
+
+        clipboard = QApplication.clipboard()
+        clipboard.setText(ProjectAPI.make_foldername(project_name))
+
     def step_new(self):
         project_name = self.projects.selected()
         if project_name is None:
@@ -112,6 +123,15 @@ class CentralWidget(QWidget):
         step_name = self.steps.selected()
         if project_name and step_name:
             StepAPI.open_documentation(project_name, step_name)
+
+    def step_path_to_clipboard(self):
+        project_name = self.projects.selected()
+        step_name = self.steps.selected()
+        if step_name is None or project_name is None:
+            return
+
+        clipboard = QApplication.clipboard()
+        clipboard.setText(StepAPI.make_foldername(project_name, step_name))
 
     def version_new(self):
         project_name = self.projects.selected()
@@ -152,3 +172,13 @@ class CentralWidget(QWidget):
         version_name = self.versions.selected()
         if project_name and step_name and version_name:
             VersionAPI.open_documentation(project_name, step_name, version_name)
+
+    def version_path_to_clipboard(self):
+        project_name = self.projects.selected()
+        step_name = self.steps.selected()
+        version_name = self.versions.selected()
+        if step_name is None or project_name is None or version_name is None:
+            return
+
+        clipboard = QApplication.clipboard()
+        clipboard.setText(VersionAPI.make_foldername(project_name, step_name, version_name))
