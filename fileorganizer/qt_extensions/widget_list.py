@@ -52,3 +52,14 @@ class WidgetList(QGroupBox):
             self.list.setFixedHeight(widget.sizeHint().height() + self.list.horizontalScrollBar().height())
         else:
             self.list.setFixedWidth(widget.sizeHint().width() + self.list.verticalScrollBar().width())
+
+    def clear(self):
+        self.list.clear()
+
+    def selected(self):
+        indexes = self.list.selectedIndexes()
+        if indexes:
+            if self._is_horizontal:
+                return self.list.itemWidget(self.list.item(indexes[0].column())).name
+            else:
+                return self.list.itemWidget(self.list.item(indexes[0].row())).name
