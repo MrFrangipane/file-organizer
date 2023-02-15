@@ -27,8 +27,8 @@ class WidgetList(QGroupBox):
 
         self.list.setAlternatingRowColors(True)
 
-        self.button_new = make_icon_button(f"Create new {caption}", 'new.png', self.newClicked)
-        self.button_docs = make_icon_button("Open documentation folder", 'docs.png', self.documentationClicked)
+        self.button_new = make_icon_button(f"Create new {caption}", 'plus.png', self.newClicked)
+        self.button_docs = make_icon_button("Open documentation folder", 'file.png', self.documentationClicked)
         self.button_refresh = make_icon_button("Refresh list", 'refresh.png', self.refreshClicked)
 
         layout = QGridLayout(self)
