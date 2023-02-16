@@ -42,6 +42,7 @@ class CentralWidget(QWidget):
         self.version_details = VersionDetails()
         self.version_details.setMinimumSize(400, 400)
         self.version_details.copyFilepathClicked.connect(self.version_detail_copy_filepath)
+        self.version_details.notesChanged.connect(self.version_notes_changed)
 
         layout = QGridLayout(self)
         layout.addWidget(self.projects, 0, 0, 2, 1)
@@ -182,6 +183,7 @@ class CentralWidget(QWidget):
             return
 
         self.version_details.set_filepath(VersionAPI.make_filepath(project_name, step_name, version_name))
+        self.version_details.set_notes(VersionAPI.get_notes(project_name, step_name, version_name))
 
     def version_open_folder(self):
         project_name = self.projects.selected()
@@ -207,3 +209,12 @@ class CentralWidget(QWidget):
 
         clipboard = QApplication.clipboard()
         clipboard.setText(filepath)
+
+    def version_notes_changed(self):
+        project_name = self.projects.selected()
+        step_name = self.steps.selected()
+        version_name = self.versions.selected()
+        if step_name is None or project_name is None or version_name is None:
+            return
+
+        VersionAPI.set_notes(project_name, step_name, version_name, self.version_details.get_notes())
