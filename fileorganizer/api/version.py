@@ -53,8 +53,8 @@ class VersionAPI:
         return True
 
     @staticmethod
-    def open_documentation(project_name: str, step_name: str, version_name: str) -> None:
-        os.startfile(VersionAPI._make_documentation_foldername(project_name, step_name, version_name))
+    def open_folder(project_name: str, step_name: str, version_name: str) -> None:
+        os.startfile(VersionAPI.make_foldername(project_name, step_name, version_name))
 
     @staticmethod
     def _make_documentation_foldername(project_name: str, step_name: str, version_name: str) -> str:

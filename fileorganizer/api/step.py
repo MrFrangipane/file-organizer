@@ -53,8 +53,8 @@ class StepAPI:
         return True
 
     @staticmethod
-    def open_documentation(project_name: str, step_name: str) -> None:
-        os.startfile(StepAPI._make_documentation_foldername(project_name, step_name))
+    def open_folder(project_name: str, step_name: str) -> None:
+        os.startfile(StepAPI.make_foldername(project_name, step_name))
 
     @staticmethod
     def _make_documentation_foldername(project_name: str, step_name: str) -> str:

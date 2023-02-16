@@ -48,8 +48,8 @@ class ProjectAPI:
         return True
 
     @staticmethod
-    def open_documentation(project_name):
-        os.startfile(ProjectAPI._make_documentation_foldername(project_name))
+    def open_folder(project_name):
+        os.startfile(ProjectAPI.make_foldername(project_name))
 
     @staticmethod
     def _make_documentation_foldername(project_name):
