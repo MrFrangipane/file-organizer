@@ -4,7 +4,7 @@ from PySide6.QtGui import QIcon
 from fileorganizer.python_extensions import make_resource_filepath
 
 
-def make_icon_button(tooltip, icon, signal, caption="", size=30):
+def make_icon_button(tooltip, icon, signal, caption="", size=30) -> QPushButton:
     icon = QIcon(make_resource_filepath(icon))
     if caption:
         button = QPushButton(caption)
@@ -18,7 +18,7 @@ def make_icon_button(tooltip, icon, signal, caption="", size=30):
     return button
 
 
-def make_warning_message_box(parent, message):
+def make_warning_message_box(parent, message) -> QMessageBox:
     message_box = QMessageBox(parent)
     message_box.setIcon(QMessageBox.Icon.Warning)
     message_box.setWindowTitle("Warning")

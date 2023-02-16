@@ -2,6 +2,7 @@ import os
 import json
 from operator import itemgetter
 
+from fileorganizer.python_extensions import sanitize
 from fileorganizer.api.step import StepAPI
 
 
@@ -66,9 +67,12 @@ class VersionAPI:
         return os.path.join(VersionAPI.make_foldername(project_name, step_name, version_name), ".fileorganizer")
 
     @staticmethod
-    def make_foldername(project_name: str, step_name: str, version_name: str) -> str:
-        return os.path.join(StepAPI.make_foldername(project_name, step_name), VersionAPI._sanitize(version_name))
+    def make_filepath(project_name: str, step_name: str, version_name: str) -> str:
+        return os.path.join(
+            VersionAPI.make_foldername(project_name, step_name, version_name),
+            f"{sanitize(step_name)}_{sanitize(version_name)}"
+        )
 
     @staticmethod
-    def _sanitize(name: str) -> str:
-        return name.lower().replace(" ", "").replace("'", "")
+    def make_foldername(project_name: str, step_name: str, version_name: str) -> str:
+        return os.path.join(StepAPI.make_foldername(project_name, step_name), sanitize(version_name))

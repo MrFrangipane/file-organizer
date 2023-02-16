@@ -1,6 +1,8 @@
 import os
 import json
 
+from fileorganizer.python_extensions import sanitize
+
 
 class ProjectAPI:
 
@@ -62,8 +64,4 @@ class ProjectAPI:
 
     @staticmethod
     def make_foldername(project_name):
-        return os.path.join(ProjectAPI.root_folder, ProjectAPI._sanitize(project_name))
-
-    @staticmethod
-    def _sanitize(name):
-        return name.lower().replace(" ", "").replace("'", "")
+        return os.path.join(ProjectAPI.root_folder, sanitize(project_name))

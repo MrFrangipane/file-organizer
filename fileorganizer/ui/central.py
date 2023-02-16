@@ -1,7 +1,5 @@
 from PySide6.QtWidgets import QApplication, QWidget, QGridLayout, QInputDialog
 
-from PySide6.QtWidgets import QGroupBox
-
 from fileorganizer.qt_extensions import make_warning_message_box
 from fileorganizer.qt_extensions.widget_list import WidgetList
 from fileorganizer.qt_extensions.hourglass import Hourglass
@@ -9,6 +7,7 @@ from fileorganizer.qt_extensions.hourglass import Hourglass
 from fileorganizer.ui.project import ProjectWidget
 from fileorganizer.ui.step import StepWidget
 from fileorganizer.ui.version import VersionWidget
+from fileorganizer.ui.version_details import VersionDetails
 
 from fileorganizer.api.project import ProjectAPI
 from fileorganizer.api.step import StepAPI
@@ -38,15 +37,17 @@ class CentralWidget(QWidget):
         self.versions.refreshClicked.connect(self.versions_refresh)
         self.versions.openFolderClicked.connect(self.version_open_folder)
         self.versions.pathToClipboardClicked.connect(self.version_path_to_clipboard)
+        self.versions.currentChanged.connect(self.version_current_changed)
 
-        self.empty_version = QGroupBox("Rien ici")
-        self.empty_version.setMinimumSize(400, 400)
+        self.version_details = VersionDetails()
+        self.version_details.setMinimumSize(400, 400)
+        self.version_details.copyFilepathClicked.connect(self.version_detail_copy_filepath)
 
         layout = QGridLayout(self)
         layout.addWidget(self.projects, 0, 0, 2, 1)
         layout.addWidget(self.steps, 0, 1, 1, 2)
         layout.addWidget(self.versions, 1, 2, 1, 1)
-        layout.addWidget(self.empty_version, 1, 1)
+        layout.addWidget(self.version_details, 1, 1)
 
         layout.setRowStretch(1, 100)
         layout.setColumnStretch(1, 100)
@@ -69,6 +70,7 @@ class CentralWidget(QWidget):
 
     def projects_refresh(self):
         with Hourglass():
+            self.version_details.clear()
             self.versions.clear()
             self.steps.clear()
             self.projects.clear()
@@ -111,6 +113,7 @@ class CentralWidget(QWidget):
 
     def steps_refresh(self):
         with Hourglass():
+            self.version_details.clear()
             self.versions.clear()
             self.steps.clear()
 
@@ -170,6 +173,16 @@ class CentralWidget(QWidget):
             for version_name in VersionAPI.all_names(project_name, step_name):
                 self.versions.addWidget(VersionWidget(version_name))
 
+    def version_current_changed(self):
+        self.version_details.clear()
+        project_name = self.projects.selected()
+        step_name = self.steps.selected()
+        version_name = self.versions.selected()
+        if not version_name:
+            return
+
+        self.version_details.set_filepath(VersionAPI.make_filepath(project_name, step_name, version_name))
+
     def version_open_folder(self):
         project_name = self.projects.selected()
         step_name = self.steps.selected()
@@ -186,3 +199,11 @@ class CentralWidget(QWidget):
 
         clipboard = QApplication.clipboard()
         clipboard.setText(VersionAPI.make_foldername(project_name, step_name, version_name))
+
+    def version_detail_copy_filepath(self):
+        filepath = self.version_details.filepath()
+        if not filepath:
+            return
+
+        clipboard = QApplication.clipboard()
+        clipboard.setText(filepath)

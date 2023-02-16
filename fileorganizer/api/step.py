@@ -2,6 +2,7 @@ import os
 import json
 from operator import itemgetter
 
+from fileorganizer.python_extensions import sanitize
 from fileorganizer.api.project import ProjectAPI
 
 
@@ -67,8 +68,4 @@ class StepAPI:
 
     @staticmethod
     def make_foldername(project_name: str, step_name: str) -> str:
-        return os.path.join(ProjectAPI.make_foldername(project_name), StepAPI._sanitize(step_name))
-
-    @staticmethod
-    def _sanitize(name: str) -> str:
-        return name.lower().replace(" ", "").replace("'", "")
+        return os.path.join(ProjectAPI.make_foldername(project_name), sanitize(step_name))

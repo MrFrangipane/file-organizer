@@ -76,6 +76,7 @@ class WidgetList(QGroupBox):  # FIXME find a better name
         self._update_enabled()
 
     def addWidget(self, widget):
+        self.blockSignals(True)
         item = QListWidgetItem()
         item.setSizeHint(widget.sizeHint())
 
@@ -86,12 +87,12 @@ class WidgetList(QGroupBox):  # FIXME find a better name
             self.list.setFixedHeight(widget.sizeHint().height() + self.list.horizontalScrollBar().height())
         else:
             self.list.setFixedWidth(widget.sizeHint().width() + self.list.verticalScrollBar().width())
+        self.blockSignals(False)
 
     def clear(self):
-        self.blockSignals(True)
+        # FIXME dont over update everything
         self.list.clear()
         self._update_enabled()
-        self.blockSignals(False)
 
     def selected(self):
         indexes = self.list.selectedIndexes()

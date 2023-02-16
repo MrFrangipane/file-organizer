@@ -1,3 +1,4 @@
+import os
 import sys
 
 from PySide6.QtWidgets import QApplication
@@ -8,7 +9,7 @@ from fileorganizer.ui.main_window import MainWindow
 from fileorganizer.ui.central import CentralWidget
 
 
-_ROOT_FOLDER = sys.argv[1]  # FIXME with argparse
+_ROOT_FOLDER = sys.argv[1].replace("\\", os.sep).replace("/", os.sep)  # FIXME with argparse
 
 #
 # API
