@@ -11,3 +11,4 @@ Organize your project files
 Icons base design provided by 
 - [hdk Icons](https://www.flaticon.com/authors/hdk-icons)
 - [Ardiansyah](https://www.flaticon.com/authors/ardiansyah)
+- [KiCad authors](https://github.com/KiCad/kicad-source-mirror/blob/master/AUTHORS.txt)

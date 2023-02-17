@@ -12,6 +12,7 @@ from fileorganizer.ui.version_details import VersionDetails
 from fileorganizer.api.project import ProjectAPI
 from fileorganizer.api.step import StepAPI
 from fileorganizer.api.version import VersionAPI
+from fileorganizer.api.contextual_action import ContextualActionAPI
 
 
 class CentralWidget(QWidget):
@@ -184,6 +185,8 @@ class CentralWidget(QWidget):
 
         self.version_details.set_filepath(VersionAPI.make_filepath(project_name, step_name, version_name))
         self.version_details.set_notes(VersionAPI.get_notes(project_name, step_name, version_name))
+        for action_widget in ContextualActionAPI.get_all_widgets(project_name, step_name, version_name):
+            self.version_details.add_contextual_action_widget(action_widget)
 
     def version_open_folder(self):
         project_name = self.projects.selected()
