@@ -8,6 +8,7 @@ class StepWidget(QWidget):
 
         self.name = name
         self._label = QLabel(name)
+        self._label.setStyleSheet("color: rgb(230, 230, 230)")
 
         layout = QGridLayout(self)
         layout.addWidget(self._label)

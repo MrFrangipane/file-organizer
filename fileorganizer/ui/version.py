@@ -9,6 +9,7 @@ class VersionWidget(QWidget):
         self.name = name
 
         self._label = QLabel(name)
+        self._label.setStyleSheet("color: rgb(230, 230, 230)")
 
         layout = QGridLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)

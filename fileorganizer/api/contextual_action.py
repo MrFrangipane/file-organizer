@@ -31,7 +31,7 @@ class ContextualActionAPI:
             )]
 
         # FreeCAD 0.20
-        freecad_files = sorted(glob(version_filepath + "-*.FCStd"))
+        freecad_files = sorted(glob(version_filepath + "-*.FCStd") + glob(version_filepath + "-*.step"))
         if freecad_files:
 
             button = make_icon_button("Select a FreeCAD file to open", "freecad.png", None, "Open...")
