@@ -4,8 +4,12 @@ from PySide6.QtGui import QIcon
 from fileorganizer.python_extensions import make_resource_filepath
 
 
-def make_icon_button(tooltip, icon, signal, caption="", size=30) -> QPushButton:  # FIXME argument order ?
-    icon = QIcon(make_resource_filepath(icon))
+def make_icon(icon_filename):
+    return QIcon(make_resource_filepath(icon_filename))
+
+
+def make_icon_button(tooltip, icon_filename, signal, caption="", size=30) -> QPushButton:  # FIXME argument order ?
+    icon = make_icon(icon_filename)
     if caption:
         button = QPushButton(caption)
         button.setFixedHeight(size)

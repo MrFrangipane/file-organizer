@@ -5,6 +5,8 @@ Organize your project files
 ## Todo / Roadmap
 
 - Rename `_documentation` folder to `_documents`
+- Use combos for project and such
+- Fuse notes ?
 
 ## Notes
 
