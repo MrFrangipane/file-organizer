@@ -143,6 +143,19 @@ QPushButton[secondary=true]:pressed {
     background-color: rgb(66, 66, 66);
 }
 
+QPushButton[transparent=true] {
+    background-color: rgba(66, 66, 66, 0);
+}
+
+QPushButton[transparent=true]:hover {
+    background-color: rgba(200, 200, 200, 128);
+    color: rgba(239, 239, 239);
+}
+
+QPushButton[transparent=true]:disabled {
+    background-color: rgba(66, 66, 66, 0);
+}
+
 QLineEdit:disabled,
 QPushButton:disabled,
 QPushButton[primary=true]:disabled {

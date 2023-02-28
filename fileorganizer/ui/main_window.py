@@ -10,3 +10,5 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("File Organizer")
         self.setWindowIcon(QIcon(make_resource_filepath("stack.png")))
+
+        self.resize(1920, 1080)

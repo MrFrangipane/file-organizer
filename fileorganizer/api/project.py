@@ -54,6 +54,25 @@ class ProjectAPI:
         os.startfile(ProjectAPI.make_foldername(project_name))
 
     @staticmethod
+    def set_notes(project_name: str, notes: str) -> None:
+        filepath = ProjectAPI._make_notes_filepath(project_name)
+        with open(filepath, 'w+') as notes_file:
+            notes_file.write(notes)
+
+    @staticmethod
+    def get_notes(project_name: str) -> str:
+        filepath = ProjectAPI._make_notes_filepath(project_name)
+        if not os.path.exists(filepath):
+            return ""
+
+        with open(filepath, 'r') as notes_file:
+            return notes_file.read()
+
+    @staticmethod
+    def _make_notes_filepath(project_name: str) -> str:
+        return os.path.join(ProjectAPI.make_foldername(project_name), '.notes.txt')
+
+    @staticmethod
     def _make_documentation_foldername(project_name):
         foldername = ProjectAPI.make_foldername(project_name)
         return os.path.join(foldername, "_documentation")

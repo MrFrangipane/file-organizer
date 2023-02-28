@@ -1,12 +1,11 @@
 from PySide6.QtWidgets import QApplication, QWidget, QGridLayout, QInputDialog
 
 from fileorganizer.qt_extensions import make_warning_message_box
-from fileorganizer.qt_extensions.widget_list import WidgetList
+from fileorganizer.qt_extensions.list import List
 from fileorganizer.qt_extensions.hourglass import Hourglass
 
-from fileorganizer.ui.project import ProjectWidget
-from fileorganizer.ui.step import StepWidget
-from fileorganizer.ui.version import VersionWidget
+from fileorganizer.qt_extensions.list_item import ListItem
+from fileorganizer.qt_extensions.notes_editor import NotesEditor
 from fileorganizer.ui.version_details import VersionDetails
 
 from fileorganizer.api.project import ProjectAPI
@@ -19,40 +18,44 @@ class CentralWidget(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
 
-        self.projects = WidgetList("Project", widget_size=ProjectWidget("").sizeHint().width())  # FIXME expose a constant
+        self.projects = List("Project")
         self.projects.newClicked.connect(self.project_new)
-        self.projects.currentChanged.connect(self.steps_refresh)
         self.projects.refreshClicked.connect(self.projects_refresh)
-        self.projects.openFolderClicked.connect(self.project_open_folder)
-        self.projects.pathToClipboardClicked.connect(self.project_path_to_clipboard)
+        self.projects.currentChanged.connect(self.projects_current_changed)
 
-        self.steps = WidgetList("Step", horizontal=True, widget_size=StepWidget("").sizeHint().height())  # FIXME expose a constant
+        self.project_notes = NotesEditor("Notes")
+
+        self.steps = List("Step")
         self.steps.newClicked.connect(self.step_new)
-        self.steps.currentChanged.connect(self.versions_refresh)
         self.steps.refreshClicked.connect(self.steps_refresh)
-        self.steps.openFolderClicked.connect(self.step_open_folder)
-        self.steps.pathToClipboardClicked.connect(self.step_path_to_clipboard)
+        self.steps.currentChanged.connect(self.steps_current_changed)
 
-        self.versions = WidgetList("Version", widget_size=VersionWidget("").sizeHint().width())  # FIXME expose a constant
+        self.step_notes = NotesEditor("Notes")
+
+        self.versions = List("Version")
         self.versions.newClicked.connect(self.version_new)
         self.versions.refreshClicked.connect(self.versions_refresh)
-        self.versions.openFolderClicked.connect(self.version_open_folder)
-        self.versions.pathToClipboardClicked.connect(self.version_path_to_clipboard)
         self.versions.currentChanged.connect(self.version_current_changed)
+
+        self.version_notes = NotesEditor("Notes")
 
         self.version_details = VersionDetails()
         self.version_details.setMinimumSize(400, 400)
         self.version_details.copyFilepathClicked.connect(self.version_detail_copy_filepath)
-        self.version_details.notesChanged.connect(self.version_notes_changed)
 
         layout = QGridLayout(self)
-        layout.addWidget(self.projects, 0, 0, 2, 1)
-        layout.addWidget(self.steps, 0, 1, 1, 2)
-        layout.addWidget(self.versions, 1, 2, 1, 1)
-        layout.addWidget(self.version_details, 1, 1)
 
-        layout.setRowStretch(1, 100)
-        layout.setColumnStretch(1, 100)
+        layout.addWidget(self.projects, 0, 0)
+        layout.addWidget(self.steps, 1, 0)
+        layout.addWidget(self.versions, 2, 0)
+
+        layout.addWidget(self.project_notes, 0, 1)
+        layout.addWidget(self.step_notes, 1, 1)
+        layout.addWidget(self.version_notes, 2, 1)
+
+        layout.addWidget(self.version_details, 0, 2, 3, 1)
+
+        layout.setColumnStretch(2, 100)
 
         self.projects_refresh()
 
@@ -70,22 +73,31 @@ class CentralWidget(QWidget):
         else:
             make_warning_message_box(self.parent(), f"Error during project creation").exec()
 
+    def projects_current_changed(self):
+        project_name = self.projects.selected()
+        self.project_notes.set_entity(project_name=project_name)
+        self.steps_refresh()
+
     def projects_refresh(self):
         with Hourglass():
             self.version_details.clear()
             self.versions.clear()
             self.steps.clear()
             self.projects.clear()
+            self.project_notes.clear()
             for project_name in ProjectAPI.all_names():
-                self.projects.addWidget(ProjectWidget(project_name))
+                item = ListItem(project_name)
+                item.openFolderClicked.connect(self.project_open_folder)
+                item.pathToClipboardClicked.connect(self.project_path_to_clipboard)
+                self.projects.addItem(item)
 
     def project_open_folder(self):
-        project_name = self.projects.selected()
+        project_name = self.sender().name
         if project_name:
             ProjectAPI.open_folder(project_name)
 
     def project_path_to_clipboard(self):
-        project_name = self.projects.selected()
+        project_name = self.sender().name
         if project_name is None:
             return
 
@@ -113,6 +125,12 @@ class CentralWidget(QWidget):
         else:
             make_warning_message_box(self.parent(), f"Error during step creation").exec()
 
+    def steps_current_changed(self):
+        project_name = self.projects.selected()
+        step_name = self.steps.selected()
+        self.step_notes.set_entity(project_name=project_name, step_name=step_name)
+        self.versions_refresh()
+
     def steps_refresh(self):
         with Hourglass():
             self.version_details.clear()
@@ -124,17 +142,20 @@ class CentralWidget(QWidget):
                 return
 
             for step_name in StepAPI.all_names(project_name):
-                self.steps.addWidget(StepWidget(step_name))
+                item = ListItem(step_name)
+                item.openFolderClicked.connect(self.step_open_folder)
+                item.pathToClipboardClicked.connect(self.step_path_to_clipboard)
+                self.steps.addItem(item)
 
     def step_open_folder(self):
         project_name = self.projects.selected()
-        step_name = self.steps.selected()
+        step_name = self.sender().name
         if project_name and step_name:
             StepAPI.open_folder(project_name, step_name)
 
     def step_path_to_clipboard(self):
         project_name = self.projects.selected()
-        step_name = self.steps.selected()
+        step_name = self.sender().name
         if step_name is None or project_name is None:
             return
 
@@ -173,7 +194,10 @@ class CentralWidget(QWidget):
                 return
 
             for version_name in VersionAPI.all_names(project_name, step_name):
-                self.versions.addWidget(VersionWidget(version_name))
+                item = ListItem(version_name)
+                item.openFolderClicked.connect(self.version_open_folder)
+                item.pathToClipboardClicked.connect(self.version_path_to_clipboard)
+                self.versions.addItem(item)
 
     def version_current_changed(self):
         self.version_details.clear()
@@ -183,22 +207,23 @@ class CentralWidget(QWidget):
         if not version_name:
             return
 
+        self.version_notes.set_entity(project_name, step_name, version_name)
+
         self.version_details.set_filepath(VersionAPI.make_filepath(project_name, step_name, version_name))
-        self.version_details.set_notes(VersionAPI.get_notes(project_name, step_name, version_name))
         for action_widget in ContextualActionAPI.get_all_widgets(project_name, step_name, version_name):
             self.version_details.add_contextual_action_widget(action_widget)
 
     def version_open_folder(self):
         project_name = self.projects.selected()
         step_name = self.steps.selected()
-        version_name = self.versions.selected()
+        version_name = self.sender().name
         if project_name and step_name and version_name:
             VersionAPI.open_folder(project_name, step_name, version_name)
 
     def version_path_to_clipboard(self):
         project_name = self.projects.selected()
         step_name = self.steps.selected()
-        version_name = self.versions.selected()
+        version_name = self.sender().name
         if step_name is None or project_name is None or version_name is None:
             return
 
@@ -219,5 +244,3 @@ class CentralWidget(QWidget):
         version_name = self.versions.selected()
         if step_name is None or project_name is None or version_name is None:
             return
-
-        VersionAPI.set_notes(project_name, step_name, version_name, self.version_details.get_notes())

@@ -58,6 +58,25 @@ class StepAPI:
         os.startfile(StepAPI.make_foldername(project_name, step_name))
 
     @staticmethod
+    def set_notes(project_name: str, step_name: str, notes: str) -> None:
+        filepath = StepAPI._make_notes_filepath(project_name, step_name)
+        with open(filepath, 'w+') as notes_file:
+            notes_file.write(notes)
+
+    @staticmethod
+    def get_notes(project_name: str, step_name: str) -> str:
+        filepath = StepAPI._make_notes_filepath(project_name, step_name)
+        if not os.path.exists(filepath):
+            return ""
+
+        with open(filepath, 'r') as notes_file:
+            return notes_file.read()
+
+    @staticmethod
+    def _make_notes_filepath(project_name: str, step_name: str) -> str:
+        return os.path.join(StepAPI.make_foldername(project_name, step_name), '.notes.txt')
+
+    @staticmethod
     def _make_documentation_foldername(project_name: str, step_name: str) -> str:
         foldername = StepAPI.make_foldername(project_name, step_name)
         return os.path.join(foldername, "_documentation")
