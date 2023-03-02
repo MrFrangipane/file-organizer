@@ -149,7 +149,7 @@ QPushButton[transparent=true] {
 
 QPushButton[transparent=true]:hover {
     background-color: rgba(200, 200, 200, 128);
-    color: rgba(239, 239, 239);
+    color: rgb(239, 239, 239);
 }
 
 QPushButton[transparent=true]:disabled {

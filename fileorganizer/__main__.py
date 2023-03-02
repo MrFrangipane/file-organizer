@@ -27,12 +27,16 @@ main_window = MainWindow()
 central_widget = CentralWidget()
 
 main_window.setCentralWidget(central_widget)
-main_window.show()
 
 #
 # Run
-if len(sys.argv) >= 3 and sys.argv[2] == "--css":
+if "--css" in sys.argv:
     from guibedos6.css.editor import CSSEditor
     css_editor = CSSEditor('Frangitron')
+
+if "--maximized" in sys.argv:
+    main_window.showMaximized()
+else:
+    main_window.show()
 
 sys.exit(q_application.exec())
